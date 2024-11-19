@@ -13,8 +13,8 @@ torch
 
 # 安装
 ```bash
-git clone https://github.com/Human9000/nd-log-flash-attn.git
-cd nd-log-flash-attn
+git clone https://github.com/Human9000/log-attn.git
+cd log-attn
 pip install .
 ```
 
