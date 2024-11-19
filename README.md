@@ -4,7 +4,7 @@
 
 ![结构](loga.png)
 
-# 环境参数
+# 环境依赖
 ```bash
 flash-attn==2.7.0.post2
 ptflops
