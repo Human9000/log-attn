@@ -3,8 +3,20 @@
 
 
 # 环境参数
+```bash
 flash-attn==2.7.0.post2
 ptflops
 torch
+```
 
+# 安装
+```bash
+git clone https://github.com/Human9000/nd-log-flash-attn.git
+cd nd-log-flash-attn
+pip install .
+```
 
+# 测试
+```bash
+python demo/test_flops_params.py
+```

@@ -2,11 +2,11 @@
 import time
 import torch
 import pandas as pd
-from models import LogFA1d, LogFA2d, LogFA3d
+from logfa import LogFA1d, LogFA2d, LogFA3d
 from ptflops import get_model_complexity_info
 
 
-if __name__ == '__main__':
+def test_logfa():
 
     df = pd.DataFrame(columns=['model', 'channels', 'heads', 'bases', 'size', 'flops', 'params',  'time(ms)'])
 
@@ -40,3 +40,7 @@ if __name__ == '__main__':
     # 0  LogFA1d        32      4   [8]         (50176,)   1.03 GMac  4.51 k       1.1
     # 1  LogFA2d        32      4   [8]       (224, 224)   1.04 GMac   4.7 k       1.2
     # 2  LogFA3d        32      4   [8]  (128, 128, 128)  48.65 GMac  5.28 k      39.0
+
+
+if __name__ == '__main__':
+    test_logfa()

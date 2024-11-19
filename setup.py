@@ -1,4 +1,4 @@
-"""Setup Torch Mamba."""
+"""Setup Torch multi-dimensional logarithmic flash attention """
 
 from setuptools import find_packages, setup
 
