@@ -7,8 +7,9 @@ import math
 
 from flash_attn import flash_attn_func, flash_attn_qkvpacked_func
 
-# 注册到ptflop的参数量计算中
+# flash_attn 注册到ptflop的参数量计算中
 from ptflops.pytorch_engine import MODULES_MAPPING 
+
 class FlashAttnFlopsHook(nn.Module):
     def __init__(self, ):
         super().__init__()
@@ -59,7 +60,7 @@ class UpsampleLike(nn.Module):
         return F.interpolate(x, size=like.shape[2:], mode=self.mode)
 
 
-class LogFlashAttentionNd(nn.Module):
+class LogAttentionNd(nn.Module):
     def __init__(self, dim, in_channels, num_heads=8, bases=[16, 5], down_factor=1, regist_flops=False):
         super().__init__()
 
@@ -95,8 +96,9 @@ class LogFlashAttentionNd(nn.Module):
             ibs = qkv.shape[0]
             v2_list = []
             for j in range((ibs + cbs - 1)//cbs):  # 不超出GPU的最大线程数
-                v2_list.append(flash_attn_qkvpacked_func(qkv[j*cbs:(j+1)*cbs], 0.0))
-                self.flash_attn_flops_hook(qkv)  # 统计flash_attn的计算量
+                qkv_j = qkv[j*cbs:(j+1)*cbs]
+                v2_list.append(flash_attn_qkvpacked_func(qkv_j, 0.0))
+                self.flash_attn_flops_hook(qkv_j)  # 统计flash_attn的计算量
             v = torch.cat(v2_list, dim=0) .unflatten(0, [b, ]+[base,]*(n-1))
             v = v.transpose(i+1, -4).unsqueeze(-3)
 
@@ -136,17 +138,17 @@ class LogFlashAttentionNd(nn.Module):
         return self.proj(y)
 
 
-class LogFA1d(LogFlashAttentionNd):
+class LogA1d(LogAttentionNd):
     def __init__(self, nheads, headdim, bases, down_factor=1, regist_flops=False):
         super().__init__(1, nheads, headdim, bases, down_factor=down_factor, regist_flops=regist_flops)
 
 
-class LogFA2d(LogFlashAttentionNd):
+class LogA2d(LogAttentionNd):
     def __init__(self, nheads, headdim, bases, down_factor=1, regist_flops=False):
         super().__init__(2, nheads, headdim, bases, down_factor=down_factor, regist_flops=regist_flops)
 
 
-class LogFA3d(LogFlashAttentionNd):
+class LogA3d(LogAttentionNd):
     def __init__(self, nheads, headdim, bases, down_factor=1, regist_flops=False):
         super().__init__(3, nheads, headdim, bases, down_factor=down_factor, regist_flops=regist_flops)
 
